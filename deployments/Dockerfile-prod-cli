@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1
+FROM golang:1.22.4-alpine
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY ../cmd/cli ./cmd/cli
+COPY ../internal ./internal
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o cli-app ./cmd/cli/main.go
+
+CMD ["./cli-app"]

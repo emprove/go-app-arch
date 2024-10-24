@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch server",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/rest",
+      "env": {
+        "APP_LOCALE": "en",
+        "APP_URL": "http://localhost:9172",
+        "APP_LUM_URL": "http://localhost:9062",
+        "URL_SHOP": "http://localhost:3000",
+        "URL_ADMIN": "http://localhost:3001",
+        "HTTP_PORT": "9172",
+        "DB_DSN": "postgres://root:1234@localhost:5462/main?sslmode=disable"
+      }
+    },
+    {
+      "name": "Launch cli",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/cli",
+      "env": {
+        "APP_LOCALE": "en",
+        "APP_URL": "http://localhost:9172",
+        "APP_LUM_URL": "http://localhost:9062",
+        "URL_SHOP": "http://localhost:3000",
+        "URL_ADMIN": "http://localhost:3001",
+        "HTTP_PORT": "9172",
+        "DB_DSN": "postgres://root:1234@localhost:5462/main?sslmode=disable"
+      },
+      "args": ["-c", "sitemap-gen"]
+    }
+  ]
+}
