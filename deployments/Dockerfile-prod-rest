@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM golang:1.22.4-alpine
+FROM golang:1.22.4-alpine AS builder
 
 WORKDIR /app
 
@@ -10,8 +10,13 @@ RUN go mod download
 COPY ../cmd/rest ./cmd/rest
 COPY ../internal ./internal
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o rest-api ./cmd/rest/main.go
+# -s: strip symbols
+# -w: turn off DWARF debug info
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o rest-api ./cmd/rest/main.go
 
-EXPOSE 9172
+# stage 2
+FROM scratch
 
-CMD ["./rest-api"]
+COPY --from=builder /app/rest-api /rest-api
+
+CMD ["/rest-api"]
