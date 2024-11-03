@@ -19,4 +19,4 @@ FROM scratch
 
 COPY --from=builder /app/cli-app /cli-app
 
-CMD ["./cli-app"]
+CMD ["/cli-app"]
