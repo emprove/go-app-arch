@@ -5,16 +5,15 @@ import (
 	"sync"
 
 	"go-app-arch/internal/config"
+	"go-app-arch/internal/database"
 	"go-app-arch/internal/database/postgres"
 	"go-app-arch/internal/env"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Application struct {
 	Cfg *config.Cfg
 	DS  *config.DynamicState
-	DB  *pgxpool.Pool
+	DB  database.DB
 	WG  sync.WaitGroup
 }
 

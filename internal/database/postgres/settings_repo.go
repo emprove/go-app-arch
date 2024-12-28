@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -6,22 +6,23 @@ import (
 	"errors"
 	"strings"
 
+	"go-app-arch/internal/database"
 	"go-app-arch/internal/dto"
 	"go-app-arch/internal/entity"
+	"go-app-arch/internal/repository"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Settings struct {
-	db *pgxpool.Pool
+type settingsRepo struct {
+	db database.DB
 }
 
-func NewSettingsRepository(db *pgxpool.Pool) *Settings {
-	return &Settings{db: db}
+func NewSettingsRepository(db database.DB) repository.Settings {
+	return &settingsRepo{db: db}
 }
 
-func (repo *Settings) GetAll() ([]entity.Settings, error) {
+func (repo *settingsRepo) GetAll() ([]entity.Settings, error) {
 	query := `
 	SELECT 
 		id,
@@ -34,7 +35,7 @@ func (repo *Settings) GetAll() ([]entity.Settings, error) {
 		return nil, err
 	}
 
-	dbmodels, err := pgx.CollectRows(rows, pgx.RowToStructByName[entity.Settings])
+	dbmodels, err := pgx.CollectRows(rows.(pgx.Rows), pgx.RowToStructByName[entity.Settings])
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +43,7 @@ func (repo *Settings) GetAll() ([]entity.Settings, error) {
 	return dbmodels, nil
 }
 
-func (repo *Settings) FindProductCategories(args *dto.ProductCategoryFindArgs, locale string) ([]entity.ProductCategory, error) {
+func (repo *settingsRepo) FindProductCategories(args *dto.ProductCategoryFindArgs, locale string) ([]entity.ProductCategory, error) {
 	type dbrow struct {
 		Title    string
 		TitleEn  string
@@ -76,7 +77,7 @@ func (repo *Settings) FindProductCategories(args *dto.ProductCategoryFindArgs, l
 		return nil, err
 	}
 
-	dbmodels, err := pgx.CollectRows(rows, pgx.RowToStructByName[dbrow])
+	dbmodels, err := pgx.CollectRows(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func (repo *Settings) FindProductCategories(args *dto.ProductCategoryFindArgs, l
 	return res, nil
 }
 
-func (repo *Settings) FindProductOptions(locale string) ([]entity.ProductOption, error) {
+func (repo *settingsRepo) FindProductOptions(locale string) ([]entity.ProductOption, error) {
 	type dbrow struct {
 		Title   string
 		TitleEn string
@@ -124,7 +125,7 @@ func (repo *Settings) FindProductOptions(locale string) ([]entity.ProductOption,
 		return nil, err
 	}
 
-	dbmodels, err := pgx.CollectRows(rows, pgx.RowToStructByName[dbrow])
+	dbmodels, err := pgx.CollectRows(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}

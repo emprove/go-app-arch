@@ -4,26 +4,26 @@ import (
 	"net/http"
 
 	"go-app-arch/internal/config"
+	"go-app-arch/internal/database"
+	"go-app-arch/internal/database/postgres"
 	"go-app-arch/internal/mapper"
 	"go-app-arch/internal/middleware"
-	"go-app-arch/internal/repository"
 	"go-app-arch/internal/service"
 	"go-app-arch/internal/usecase"
 
 	"github.com/go-pkgz/routegroup"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewRouter(cfg *config.Cfg, ds *config.DynamicState, db *pgxpool.Pool) http.Handler {
+func NewRouter(cfg *config.Cfg, ds *config.DynamicState, db database.DB) http.Handler {
 	productMapper := mapper.NewProductMapper(cfg)
 	fileMapper := mapper.NewFileMapper(cfg)
 
-	productRepo := repository.NewProductRepository(db, productMapper, fileMapper)
-	userRepo := repository.NewUserRepository(db)
-	settingsRepo := repository.NewSettingsRepository(db)
+	productRepo := postgres.NewProductRepository(db, productMapper, fileMapper)
+	userRepo := postgres.NewUserRepository(db)
+	settingsRepo := postgres.NewSettingsRepository(db)
 
-	productSrv := service.NewProduct(ds, productRepo)
-	userSrv := service.NewUser(userRepo)
+	productSrv := service.NewProductService(ds, productRepo)
+	userSrv := service.NewUserService(userRepo)
 
 	infoUsecase := usecase.NewInfo(cfg, ds, settingsRepo)
 
@@ -48,14 +48,14 @@ func NewRouter(cfg *config.Cfg, ds *config.DynamicState, db *pgxpool.Pool) http.
 	return rr
 }
 
-func productHandlerAdmReg(rr *routegroup.Bundle, sp *service.Product) {
+func productHandlerAdmReg(rr *routegroup.Bundle, sp *service.ProductService) {
 	handler := NewProductHandlerAdm(sp)
 
 	rr.HandleFunc("GET /products", handler.FindList)
 	rr.HandleFunc("GET /products/{id}", handler.FindOne)
 }
 
-func productHandlerReg(rr *routegroup.Bundle, sp *service.Product) {
+func productHandlerReg(rr *routegroup.Bundle, sp *service.ProductService) {
 	handler := NewProductHandler(sp)
 
 	rr.HandleFunc("GET /products", handler.FindList)

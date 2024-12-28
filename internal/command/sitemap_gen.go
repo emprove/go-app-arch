@@ -3,15 +3,15 @@ package command
 import (
 	"os"
 
+	"go-app-arch/internal/database/postgres"
 	"go-app-arch/internal/dto"
 	"go-app-arch/internal/mapper"
-	"go-app-arch/internal/repository"
 )
 
 func (c *SitemapGen) Run(args []string) *error {
 	productMapper := mapper.NewProductMapper(c.app.Cfg)
 	fileMapper := mapper.NewFileMapper(c.app.Cfg)
-	productRepo := repository.NewProductRepository(c.app.DB, productMapper, fileMapper)
+	productRepo := postgres.NewProductRepository(c.app.DB, productMapper, fileMapper)
 
 	str := "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	str += "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"

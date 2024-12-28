@@ -9,10 +9,15 @@ import (
 type Info struct {
 	cfg          *config.Cfg
 	DS           *config.DynamicState
-	repoSettings *repository.Settings
+	repoSettings repository.Settings
 }
 
-func NewInfo(cfg *config.Cfg, ds *config.DynamicState, rs *repository.Settings) *Info {
+type InfoInterface interface {
+	GetLocales() []config.Locale
+	GetConfig(args *dto.GetConfigArgs, locale string) (*dto.GetConfigRes, error)
+}
+
+func NewInfo(cfg *config.Cfg, ds *config.DynamicState, rs repository.Settings) *Info {
 	return &Info{cfg: cfg, DS: ds, repoSettings: rs}
 }
 

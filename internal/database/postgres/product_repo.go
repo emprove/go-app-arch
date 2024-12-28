@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -7,28 +7,29 @@ import (
 	"strings"
 	"time"
 
+	"go-app-arch/internal/database"
 	"go-app-arch/internal/dto"
 	"go-app-arch/internal/entity"
 	"go-app-arch/internal/mapper"
+	"go-app-arch/internal/repository"
 	"go-app-arch/internal/typefmt"
 	"go-app-arch/internal/utils"
 
 	"github.com/jackc/pgx/pgtype"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Product struct {
-	db            *pgxpool.Pool
+type productRepo struct {
+	db            database.DB
 	productMapper *mapper.ProductMapper
 	fileMapper    *mapper.FileMapper
 }
 
-func NewProductRepository(db *pgxpool.Pool, pm *mapper.ProductMapper, fm *mapper.FileMapper) *Product {
-	return &Product{db: db, productMapper: pm, fileMapper: fm}
+func NewProductRepository(db database.DB, pm *mapper.ProductMapper, fm *mapper.FileMapper) repository.Product {
+	return &productRepo{db: db, productMapper: pm, fileMapper: fm}
 }
 
-func (repo *Product) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneRowAdm, error) {
+func (repo *productRepo) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneRowAdm, error) {
 	type dbrow struct {
 		ID              int
 		CurrencyIso     string
@@ -95,7 +96,7 @@ func (repo *Product) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFi
 		return nil, err
 	}
 
-	dbmodel, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[dbrow])
+	dbmodel, err := pgx.CollectExactlyOneRow(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +149,7 @@ func (repo *Product) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFi
 	return &res, nil
 }
 
-func (repo *Product) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
+func (repo *productRepo) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
 	type dbrow struct {
 		TotalCount  int
 		ID          int
@@ -224,7 +225,7 @@ func (repo *Product) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.Product
 		return nil, err
 	}
 
-	dbmodels, err := pgx.CollectRows(rows, pgx.RowToStructByName[dbrow])
+	dbmodels, err := pgx.CollectRows(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +260,7 @@ func (repo *Product) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.Product
 	return &res, nil
 }
 
-func (repo *Product) FindList(args *dto.ProductFindListArgs, locale string) (*dto.ProductFindList, error) {
+func (repo *productRepo) FindList(args *dto.ProductFindListArgs, locale string) (*dto.ProductFindList, error) {
 	type dbrow struct {
 		TotalCount    int
 		ID            int
@@ -334,7 +335,7 @@ func (repo *Product) FindList(args *dto.ProductFindListArgs, locale string) (*dt
 		return nil, err
 	}
 
-	dbmodels, err := pgx.CollectRows(rows, pgx.RowToStructByName[dbrow])
+	dbmodels, err := pgx.CollectRows(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}
@@ -386,7 +387,7 @@ func (repo *Product) FindList(args *dto.ProductFindListArgs, locale string) (*dt
 	return &res, nil
 }
 
-func (repo *Product) FindOne(args *dto.ProductFindOneArgs, locale string) (*dto.ProductFindOneRow, error) {
+func (repo *productRepo) FindOne(args *dto.ProductFindOneArgs, locale string) (*dto.ProductFindOneRow, error) {
 	type dbrow struct {
 		ID              int
 		CurrencyIso     string
@@ -446,7 +447,7 @@ func (repo *Product) FindOne(args *dto.ProductFindOneArgs, locale string) (*dto.
 		return nil, err
 	}
 
-	dbmodel, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[dbrow])
+	dbmodel, err := pgx.CollectExactlyOneRow(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}

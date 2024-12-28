@@ -3,14 +3,28 @@ package postgres
 import (
 	"context"
 
+	"go-app-arch/internal/database"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func New(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
+type Postgres struct {
+	Pool *pgxpool.Pool
+}
+
+func New(ctx context.Context, dsn string) (*Postgres, error) {
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, err
 	}
+	return &Postgres{Pool: pool}, nil
+}
 
-	return pool, nil
+func (p *Postgres) Query(ctx context.Context, sql string, args ...any) (database.Rows, error) {
+	return p.Pool.Query(ctx, sql, args...)
+}
+
+func (p *Postgres) Close() error {
+	p.Pool.Close()
+	return nil
 }

@@ -8,16 +8,16 @@ import (
 	"go-app-arch/internal/validation"
 )
 
-type Product struct {
+type ProductService struct {
 	DS          *config.DynamicState
-	RepoProduct *repository.Product
+	RepoProduct repository.Product
 }
 
-func NewProduct(ds *config.DynamicState, p *repository.Product) *Product {
-	return &Product{DS: ds, RepoProduct: p}
+func NewProductService(ds *config.DynamicState, p repository.Product) *ProductService {
+	return &ProductService{DS: ds, RepoProduct: p}
 }
 
-func (s *Product) FindList(args *dto.ProductFindListArgs, currencyIso string) (*dto.ProductFindList, error) {
+func (s *ProductService) FindList(args *dto.ProductFindListArgs, currencyIso string) (*dto.ProductFindList, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
@@ -32,7 +32,7 @@ func (s *Product) FindList(args *dto.ProductFindListArgs, currencyIso string) (*
 	return res, nil
 }
 
-func (s *Product) FindOne(args *dto.ProductFindOneArgs, currencyIso string) (*dto.ProductFindOne, error) {
+func (s *ProductService) FindOne(args *dto.ProductFindOneArgs, currencyIso string) (*dto.ProductFindOne, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
@@ -80,7 +80,7 @@ func (s *Product) FindOne(args *dto.ProductFindOneArgs, currencyIso string) (*dt
 	return &res, nil
 }
 
-func (s *Product) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
+func (s *ProductService) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
@@ -95,7 +95,7 @@ func (s *Product) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFin
 	return res, nil
 }
 
-func (s *Product) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneAdm, error) {
+func (s *ProductService) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneAdm, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {

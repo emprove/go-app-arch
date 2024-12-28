@@ -1,24 +1,25 @@
-package repository
+package postgres
 
 import (
 	"context"
 	"encoding/json"
 
+	"go-app-arch/internal/database"
 	"go-app-arch/internal/entity"
+	"go-app-arch/internal/repository"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type User struct {
-	db *pgxpool.Pool
+type userRepo struct {
+	db database.DB
 }
 
-func NewUserRepository(db *pgxpool.Pool) *User {
-	return &User{db: db}
+func NewUserRepository(db database.DB) repository.User {
+	return &userRepo{db: db}
 }
 
-func (repo *User) FindOneByToken(token string) (*entity.User, error) {
+func (repo *userRepo) FindOneByToken(token string) (*entity.User, error) {
 	type dbrow struct {
 		ID          int
 		Name        string
@@ -39,7 +40,7 @@ func (repo *User) FindOneByToken(token string) (*entity.User, error) {
 		return nil, err
 	}
 
-	m, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[dbrow])
+	m, err := pgx.CollectExactlyOneRow(rows.(pgx.Rows), pgx.RowToStructByName[dbrow])
 	if err != nil {
 		return nil, err
 	}
