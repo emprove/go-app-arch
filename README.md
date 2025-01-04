@@ -19,4 +19,4 @@ UseCases within Application layer spans several Services from the Business layer
 
 ### Diagram
 
-![Diagram](diagram.jpg)
+![Diagram](diagram.png)
