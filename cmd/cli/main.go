@@ -7,7 +7,7 @@ import (
 	"runtime/debug"
 
 	"go-app-arch/internal/app"
-	"go-app-arch/internal/command"
+	"go-app-arch/internal/interfaces/cli/command"
 )
 
 var CmdMap = map[string]func(app *app.Application) command.Command{

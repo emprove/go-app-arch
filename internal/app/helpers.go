@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"go-app-arch/internal/logging"
+	"go-app-arch/internal/infrastructure/logging"
 )
 
 func (app *Application) backgroundTask(r *http.Request, fn func() error) {

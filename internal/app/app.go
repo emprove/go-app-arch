@@ -4,10 +4,10 @@ import (
 	"context"
 	"sync"
 
-	"go-app-arch/internal/config"
-	"go-app-arch/internal/database"
-	"go-app-arch/internal/database/postgres"
-	"go-app-arch/internal/env"
+	"go-app-arch/internal/app/config"
+	"go-app-arch/internal/app/env"
+	"go-app-arch/internal/infrastructure/database"
+	"go-app-arch/internal/infrastructure/persistence/postgres"
 )
 
 type Application struct {

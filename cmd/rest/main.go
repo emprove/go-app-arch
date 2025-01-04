@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 
 	"go-app-arch/internal/app"
-	"go-app-arch/internal/rest"
+	"go-app-arch/internal/interfaces/http/rest"
 )
 
 func main() {
