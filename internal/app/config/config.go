@@ -1,5 +1,7 @@
 package config
 
+import "sync"
+
 type Locale struct {
 	Title    string `json:"title"`
 	Iso      string `json:"iso"`
@@ -21,8 +23,22 @@ type Cfg struct {
 	allowedOrigins []string
 }
 
+// maybe it's better to use context.WithValue()
 type DynamicState struct {
+	mu     sync.RWMutex
 	Locale string
+}
+
+func (ds *DynamicState) SetLocale(locale string) {
+	ds.mu.Lock()
+	defer ds.mu.Unlock()
+	ds.Locale = locale
+}
+
+func (ds *DynamicState) GetLocale() string {
+	ds.mu.RLock()
+	defer ds.mu.RUnlock()
+	return ds.Locale
 }
 
 func NewConfig(dbCfg *DBCfg, appUrl, appLumUrl, urlShop, urlAdmin string, httpPort int, locales []Locale, allowedOrigins []string) *Cfg {
@@ -36,10 +52,6 @@ func NewConfig(dbCfg *DBCfg, appUrl, appLumUrl, urlShop, urlAdmin string, httpPo
 		locales:        locales,
 		allowedOrigins: allowedOrigins,
 	}
-}
-
-func NewDynamicState(locale string) *DynamicState {
-	return &DynamicState{Locale: locale}
 }
 
 func (c *Cfg) AvailableLocalesIso() []string {

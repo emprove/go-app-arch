@@ -1,6 +1,7 @@
 package command
 
 import (
+	"context"
 	"os"
 
 	"go-app-arch/internal/app/dto"
@@ -8,7 +9,7 @@ import (
 	"go-app-arch/internal/infrastructure/persistence/postgres"
 )
 
-func (c *SitemapGen) Run(args []string) *error {
+func (c *SitemapGen) Run(ctx context.Context, args []string) *error {
 	productMapper := mapper.NewProductMapper(c.app.Cfg)
 	fileMapper := mapper.NewFileMapper(c.app.Cfg)
 	productRepo := postgres.NewProductRepository(c.app.DB, productMapper, fileMapper)
@@ -30,7 +31,7 @@ func (c *SitemapGen) Run(args []string) *error {
 		str += "</url>\n"
 
 		args := &dto.ProductFindListArgs{IDs: []int{}, Category: "", PerPage: 1000, Page: 1}
-		products, err := productRepo.FindList(args, locale)
+		products, err := productRepo.FindList(ctx, args, locale)
 		if err != nil {
 			return &err
 		}

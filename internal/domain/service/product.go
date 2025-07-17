@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"go-app-arch/internal/app"
 	"go-app-arch/internal/app/config"
 	"go-app-arch/internal/app/dto"
@@ -8,11 +9,17 @@ import (
 	"go-app-arch/internal/validation"
 )
 
-type ProductServiceInterface interface {
-	FindList(args *dto.ProductFindListArgs, currencyIso string) (*dto.ProductFindList, error)
-	FindOne(args *dto.ProductFindOneArgs, currencyIso string) (*dto.ProductFindOne, error)
-	FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error)
-	FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneAdm, error)
+type ProductService interface {
+	FindList(ctx context.Context, args *dto.ProductFindListArgs, currencyIso string) (*dto.ProductFindList, error)
+	FindOne(ctx context.Context, args *dto.ProductFindOneArgs, currencyIso string) (*dto.ProductFindOne, error)
+}
+
+// todo: don't do like this, split to 2 services!
+// I'm a single contributor, so made the simplification to avoid supporting several apps/repos.
+type ProductAdmService interface {
+	ProductService
+	FindListAdm(ctx context.Context, args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error)
+	FindOneAdm(ctx context.Context, args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneAdm, error)
 }
 
 type productService struct {
@@ -20,18 +27,22 @@ type productService struct {
 	RepoProduct repository.Product
 }
 
-func NewProductService(ds *config.DynamicState, p repository.Product) ProductServiceInterface {
-	return &productService{DS: ds, RepoProduct: p}
+func NewProductService(ds *config.DynamicState, repo repository.Product) ProductService {
+	return &productService{DS: ds, RepoProduct: repo}
 }
 
-func (s *productService) FindList(args *dto.ProductFindListArgs, currencyIso string) (*dto.ProductFindList, error) {
+func NewProductAdmService(ds *config.DynamicState, repo repository.Product) ProductAdmService {
+	return &productService{DS: ds, RepoProduct: repo}
+}
+
+func (s *productService) FindList(ctx context.Context, args *dto.ProductFindListArgs, currencyIso string) (*dto.ProductFindList, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
 		return nil, &app.ValidationError{Validator: validator}
 	}
 
-	res, err := s.RepoProduct.FindList(args, s.DS.Locale)
+	res, err := s.RepoProduct.FindList(ctx, args, s.DS.Locale)
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +50,14 @@ func (s *productService) FindList(args *dto.ProductFindListArgs, currencyIso str
 	return res, nil
 }
 
-func (s *productService) FindOne(args *dto.ProductFindOneArgs, currencyIso string) (*dto.ProductFindOne, error) {
+func (s *productService) FindOne(ctx context.Context, args *dto.ProductFindOneArgs, currencyIso string) (*dto.ProductFindOne, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
 		return nil, &app.ValidationError{Validator: validator}
 	}
 
-	row, err := s.RepoProduct.FindOne(args, s.DS.Locale)
+	row, err := s.RepoProduct.FindOne(ctx, args, s.DS.Locale)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +86,7 @@ func (s *productService) FindOne(args *dto.ProductFindOneArgs, currencyIso strin
 			PerPage: 12,
 			Page:    1,
 		}
-		list, err := s.FindList(argsForList, currencyIso)
+		list, err := s.FindList(ctx, argsForList, currencyIso)
 		if err != nil {
 			return nil, err
 		}
@@ -87,14 +98,14 @@ func (s *productService) FindOne(args *dto.ProductFindOneArgs, currencyIso strin
 	return &res, nil
 }
 
-func (s *productService) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
+func (s *productService) FindListAdm(ctx context.Context, args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
 		return nil, &app.ValidationError{Validator: validator}
 	}
 
-	res, err := s.RepoProduct.FindListAdm(args)
+	res, err := s.RepoProduct.FindListAdm(ctx, args)
 	if err != nil {
 		return nil, err
 	}
@@ -102,14 +113,14 @@ func (s *productService) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.Pro
 	return res, nil
 }
 
-func (s *productService) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneAdm, error) {
+func (s *productService) FindOneAdm(ctx context.Context, args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneAdm, error) {
 	validator := validation.Validator{}
 	invalid := args.Validate(&validator)
 	if invalid {
 		return nil, &app.ValidationError{Validator: validator}
 	}
 
-	row, err := s.RepoProduct.FindOneAdm(args)
+	row, err := s.RepoProduct.FindOneAdm(ctx, args)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +156,7 @@ func (s *productService) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.Produ
 			PerPage: 12,
 			Page:    1,
 		}
-		list, err := s.FindListAdm(argsForList)
+		list, err := s.FindListAdm(ctx, argsForList)
 		if err != nil {
 			return nil, err
 		}

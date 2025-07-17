@@ -18,7 +18,8 @@ type Application struct {
 }
 
 func NewApp() (*Application, error) {
-	ds := config.NewDynamicState(env.GetString("APP_LOCALE"))
+	ds := &config.DynamicState{}
+	ds.SetLocale(env.GetString("APP_LOCALE"))
 	locales := []config.Locale{
 		{
 			Title:    "English",

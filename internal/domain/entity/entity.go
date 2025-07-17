@@ -14,9 +14,9 @@ type Settings struct {
 }
 
 type Supply struct {
-	ID       int         `json:"id"`
-	Options  interface{} `json:"options"`
-	Quantity int         `json:"quantity"`
+	ID       int `json:"id"`
+	Options  any `json:"options"`
+	Quantity int `json:"quantity"`
 }
 
 type User struct {
@@ -49,10 +49,10 @@ type ProductCategory struct {
 }
 
 type ProductOption struct {
-	Title  string      `json:"title"`
-	Code   string      `json:"code"`
-	Typeof string      `json:"typeof"`
-	Data   interface{} `json:"data"`
+	Title  string `json:"title"`
+	Code   string `json:"code"`
+	Typeof string `json:"typeof"`
+	Data   any    `json:"data"`
 }
 
 type TimeYMD struct {
@@ -64,5 +64,5 @@ func (t *TimeYMD) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 
-	return []byte(fmt.Sprintf("\"%s\"", t.Format("2006-01-02"))), nil
+	return fmt.Appendf(nil, "\"%s\"", t.Format("2006-01-02")), nil
 }

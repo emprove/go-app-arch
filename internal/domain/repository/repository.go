@@ -1,15 +1,16 @@
 package repository
 
 import (
+	"context"
 	"go-app-arch/internal/app/dto"
 	"go-app-arch/internal/domain/entity"
 )
 
 type Product interface {
-	FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneRowAdm, error)
-	FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error)
-	FindList(args *dto.ProductFindListArgs, locale string) (*dto.ProductFindList, error)
-	FindOne(args *dto.ProductFindOneArgs, locale string) (*dto.ProductFindOneRow, error)
+	FindOneAdm(ctx context.Context, args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneRowAdm, error)
+	FindListAdm(ctx context.Context, args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error)
+	FindList(ctx context.Context, args *dto.ProductFindListArgs, locale string) (*dto.ProductFindList, error)
+	FindOne(ctx context.Context, args *dto.ProductFindOneArgs, locale string) (*dto.ProductFindOneRow, error)
 }
 
 type Settings interface {

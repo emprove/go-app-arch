@@ -1,6 +1,8 @@
-### Go app N-tier DDD
+### Go app N-layer DDD
 
-This is an example to structure your HTTP + CLI application in Go using **4-tier Architecture** with DDD. It consists of 4 layers: Presentation, Application, Business (Domain) and Infrastructure (data access). The main idea of Layered Architecture (N-tier) is to make layers independent of each other. It gives interchangeability of implementations on the each layer, so we should utilize Interfaces and not concrete implementations. Using interfaces makes it easier to test.
+This is an example to structure your HTTP + CLI application in Go using **4-layer Architecture** with DDD. It consists of 4 layers: Presentation, Application, Business (Domain) and Infrastructure (data access). The main idea of Layered Architecture is to make layers independent of each other. It gives interchangeability of implementations on the each layer, so we should utilize Interfaces and not concrete implementations. Using interfaces makes it easier to test.
+
+> This repo contains 2 route groups: user and admin. In real-world app you are typically should split this to 2 services.
 
 > DISCLAIMER: There are no ideal structure for applications which business logic is unknown yet. You can’t draw a horse if you’ve never seen one. You should create a new application based on known conditions. Layered Architecture just a good starting point.
 

@@ -1,8 +1,10 @@
 package rest
 
 import (
+	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"go-app-arch/internal/app"
 	"go-app-arch/internal/app/dto"
@@ -30,7 +32,10 @@ func (h *ProductHandler) FindList(w http.ResponseWriter, r *http.Request) {
 		args.Page = page
 	}
 
-	res, err := h.sProduct.FindList(args, currencyIso)
+	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
+	defer cancel()
+
+	res, err := h.sProduct.FindList(ctx, args, currencyIso)
 	if err != nil {
 		var vErr *app.ValidationError
 		if errors.As(err, &vErr) {
@@ -61,7 +66,10 @@ func (h *ProductHandler) FindOne(w http.ResponseWriter, r *http.Request) {
 		Slug: slug,
 	}
 
-	res, err := h.sProduct.FindOne(args, currencyIso)
+	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
+	defer cancel()
+
+	res, err := h.sProduct.FindOne(ctx, args, currencyIso)
 	if err != nil {
 		var vErr *app.ValidationError
 		if errors.As(err, &vErr) {

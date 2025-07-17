@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log/slog"
 	"os"
 	"runtime/debug"
+	"time"
 
 	"go-app-arch/internal/app"
 	"go-app-arch/internal/interfaces/cli/command"
@@ -17,6 +19,9 @@ var CmdMap = map[string]func(app *app.Application) command.Command{
 }
 
 func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
 	app, err := app.NewApp()
 	if err != nil {
 		slog.Error(err.Error(), "trace", string(debug.Stack()))
@@ -30,7 +35,7 @@ func main() {
 
 	if cmdConstructor, exists := CmdMap[*cmdName]; exists {
 		cmd := cmdConstructor(app)
-		if err := cmd.Run(flag.Args()); err != nil {
+		if err := cmd.Run(ctx, flag.Args()); err != nil {
 			err := *err
 			slog.Error(err.Error(), "trace", string(debug.Stack()))
 			os.Exit(1)

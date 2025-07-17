@@ -1,9 +1,12 @@
 package command
 
-import "go-app-arch/internal/app"
+import (
+	"context"
+	"go-app-arch/internal/app"
+)
 
 type Command interface {
-	Run(args []string) *error
+	Run(ctx context.Context, args []string) *error
 }
 
 type SitemapGen struct {

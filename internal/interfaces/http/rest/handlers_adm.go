@@ -27,7 +27,7 @@ func (h *ProductHandlerAdm) FindList(w http.ResponseWriter, r *http.Request) {
 		args.Page = page
 	}
 
-	res, err := h.sProduct.FindListAdm(args)
+	res, err := h.sProduct.FindListAdm(r.Context(), args)
 	if err != nil {
 		var vErr *app.ValidationError
 		if errors.As(err, &vErr) {
@@ -51,7 +51,7 @@ func (h *ProductHandlerAdm) FindOne(w http.ResponseWriter, r *http.Request) {
 	args := &dto.ProductFindOneAdmArgs{
 		ID: id,
 	}
-	product, err := h.sProduct.FindOneAdm(args)
+	product, err := h.sProduct.FindOneAdm(r.Context(), args)
 	if err != nil {
 		var vErr *app.ValidationError
 		if errors.As(err, &vErr) {

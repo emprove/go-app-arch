@@ -29,7 +29,7 @@ func NewProductRepository(db database.DB, pm *mapper.ProductMapper, fm *mapper.F
 	return &productRepo{db: db, productMapper: pm, fileMapper: fm}
 }
 
-func (repo *productRepo) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneRowAdm, error) {
+func (repo *productRepo) FindOneAdm(ctx context.Context, args *dto.ProductFindOneAdmArgs) (*dto.ProductFindOneRowAdm, error) {
 	type dbrow struct {
 		ID              int
 		CurrencyIso     string
@@ -91,7 +91,7 @@ func (repo *productRepo) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.Produ
 	group by p.id, c.iso_alfa;`
 
 	namedArgs := pgx.NamedArgs{"id": args.ID}
-	rows, err := repo.db.Query(context.TODO(), query, namedArgs)
+	rows, err := repo.db.Query(ctx, query, namedArgs)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func (repo *productRepo) FindOneAdm(args *dto.ProductFindOneAdmArgs) (*dto.Produ
 	return &res, nil
 }
 
-func (repo *productRepo) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
+func (repo *productRepo) FindListAdm(ctx context.Context, args *dto.ProductFindListAdmArgs) (*dto.ProductFindListAdm, error) {
 	type dbrow struct {
 		TotalCount  int
 		ID          int
@@ -220,7 +220,7 @@ func (repo *productRepo) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.Pro
 	conditionsStr := strings.Join(conditions, " AND ")
 	query := strings.Replace(tmpl, "{{where}}", conditionsStr, 1)
 
-	rows, err := repo.db.Query(context.Background(), query, namedArgs)
+	rows, err := repo.db.Query(ctx, query, namedArgs)
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +260,7 @@ func (repo *productRepo) FindListAdm(args *dto.ProductFindListAdmArgs) (*dto.Pro
 	return &res, nil
 }
 
-func (repo *productRepo) FindList(args *dto.ProductFindListArgs, locale string) (*dto.ProductFindList, error) {
+func (repo *productRepo) FindList(ctx context.Context, args *dto.ProductFindListArgs, locale string) (*dto.ProductFindList, error) {
 	type dbrow struct {
 		TotalCount    int
 		ID            int
@@ -330,7 +330,7 @@ func (repo *productRepo) FindList(args *dto.ProductFindListArgs, locale string) 
 	conditionsStr := strings.Join(conditions, " AND ")
 	query := strings.Replace(tmpl, "{{where}}", conditionsStr, 1)
 
-	rows, err := repo.db.Query(context.Background(), query, namedArgs)
+	rows, err := repo.db.Query(ctx, query, namedArgs)
 	if err != nil {
 		return nil, err
 	}
@@ -387,7 +387,7 @@ func (repo *productRepo) FindList(args *dto.ProductFindListArgs, locale string) 
 	return &res, nil
 }
 
-func (repo *productRepo) FindOne(args *dto.ProductFindOneArgs, locale string) (*dto.ProductFindOneRow, error) {
+func (repo *productRepo) FindOne(ctx context.Context, args *dto.ProductFindOneArgs, locale string) (*dto.ProductFindOneRow, error) {
 	type dbrow struct {
 		ID              int
 		CurrencyIso     string
@@ -442,7 +442,7 @@ func (repo *productRepo) FindOne(args *dto.ProductFindOneArgs, locale string) (*
 	group by p.id, c.iso_alfa;`
 
 	namedArgs := pgx.NamedArgs{"slug": args.Slug}
-	rows, err := repo.db.Query(context.TODO(), query, namedArgs)
+	rows, err := repo.db.Query(ctx, query, namedArgs)
 	if err != nil {
 		return nil, err
 	}
