@@ -12,7 +12,7 @@ func Locale(availableLocalesIso []string, ds *config.DynamicState) func(http.Han
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			lang := req.Header.Get("Accept-Language")
 			if lang != "" && slices.Contains(availableLocalesIso, lang) {
-				ds.Locale = lang
+				ds.SetLocale(lang)
 			}
 
 			next.ServeHTTP(w, req)

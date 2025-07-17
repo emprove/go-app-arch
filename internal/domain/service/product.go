@@ -42,7 +42,7 @@ func (s *productService) FindList(ctx context.Context, args *dto.ProductFindList
 		return nil, &app.ValidationError{Validator: validator}
 	}
 
-	res, err := s.RepoProduct.FindList(ctx, args, s.DS.Locale)
+	res, err := s.RepoProduct.FindList(ctx, args, s.DS.GetLocale())
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (s *productService) FindOne(ctx context.Context, args *dto.ProductFindOneAr
 		return nil, &app.ValidationError{Validator: validator}
 	}
 
-	row, err := s.RepoProduct.FindOne(ctx, args, s.DS.Locale)
+	row, err := s.RepoProduct.FindOne(ctx, args, s.DS.GetLocale())
 	if err != nil {
 		return nil, err
 	}

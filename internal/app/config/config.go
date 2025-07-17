@@ -26,19 +26,19 @@ type Cfg struct {
 // maybe it's better to use context.WithValue()
 type DynamicState struct {
 	mu     sync.RWMutex
-	Locale string
+	locale string
 }
 
 func (ds *DynamicState) SetLocale(locale string) {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
-	ds.Locale = locale
+	ds.locale = locale
 }
 
 func (ds *DynamicState) GetLocale() string {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
-	return ds.Locale
+	return ds.locale
 }
 
 func NewConfig(dbCfg *DBCfg, appUrl, appLumUrl, urlShop, urlAdmin string, httpPort int, locales []Locale, allowedOrigins []string) *Cfg {

@@ -97,7 +97,7 @@ func (h *InfoHandler) GetConfig(w http.ResponseWriter, r *http.Request) {
 		ProductCategoryFindArgs: pcFindArgs,
 	}
 
-	res, err := h.uInfo.GetConfig(args, h.uInfo.DS.Locale)
+	res, err := h.uInfo.GetConfig(args, h.uInfo.DS.GetLocale())
 	if err != nil {
 		ServerError(w, r, err)
 		return

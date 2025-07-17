@@ -31,11 +31,11 @@ func (u *Info) GetConfig(args *dto.GetConfigArgs, locale string) (*dto.GetConfig
 		return nil, err
 	}
 
-	productCats, err := u.repoSettings.FindProductCategories(args.ProductCategoryFindArgs, u.DS.Locale)
+	productCats, err := u.repoSettings.FindProductCategories(args.ProductCategoryFindArgs, u.DS.GetLocale())
 	if err != nil {
 		return nil, err
 	}
-	productOpts, err := u.repoSettings.FindProductOptions(u.DS.Locale)
+	productOpts, err := u.repoSettings.FindProductOptions(u.DS.GetLocale())
 	if err != nil {
 		return nil, err
 	}
